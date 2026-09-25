@@ -10,7 +10,8 @@ import {
   setDoc,
   updateDoc,
   onSnapshot,
-  deleteField,
+  arrayUnion,
+  arrayRemove,
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 import { firebaseConfig, SPACE_ID } from "./firebase-config.js";
 
@@ -51,11 +52,22 @@ export async function setNextDate(dateStr) {
   await setDoc(docRef, { nextDate: dateStr }, { merge: true });
 }
 
-export async function setEvent(dateKey, text) {
-  const patch = text
-    ? { [`events.${dateKey}`]: text }
-    : { [`events.${dateKey}`]: deleteField() };
-  await updateDoc(docRef, patch);
+// Each day can hold several events, stored as an array of
+// { id, text } objects under events.<dateKey>.
+
+export async function addEvent(dateKey, text) {
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
+    text,
+  };
+  await updateDoc(docRef, { [`events.${dateKey}`]: arrayUnion(entry) });
+  return entry;
+}
+
+// `entry` must be the exact { id, text } object as currently stored
+// (arrayRemove matches by value, not by id alone).
+export async function removeEvent(dateKey, entry) {
+  await updateDoc(docRef, { [`events.${dateKey}`]: arrayRemove(entry) });
 }
 
 export async function setMovies(movies) {

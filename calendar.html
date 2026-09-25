@@ -127,6 +127,60 @@
     margin-top: 16px;
     justify-content: flex-end;
   }
+
+  .event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+  .event-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--plum);
+    border-radius: var(--radius-sm);
+    padding: 9px 10px 9px 12px;
+    font-size: 0.88rem;
+    line-height: 1.4;
+  }
+  .event-item .text {
+    word-break: break-word;
+  }
+  .event-empty {
+    color: var(--ink-soft);
+    font-size: 0.86rem;
+    padding: 4px 2px 2px;
+  }
+  .add-event-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .add-event-row input {
+    flex: 1;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 6px;
+    line-height: 1.4;
+    flex-shrink: 0;
+  }
+  .delete-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--ink);
+  }
 </style>
 </head>
 <body>
@@ -156,12 +210,17 @@
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <h3 id="modal-date"></h3>
-      <p class="muted">Add a plan, a memory, or a reminder for this day.</p>
-      <textarea id="modal-textarea" placeholder="e.g. Flight lands at 6pm ✈️"></textarea>
+      <p class="muted">Plans, memories, and reminders for this day.</p>
+
+      <div class="event-list" id="event-list"></div>
+
+      <form class="add-event-row" id="add-event-form">
+        <input type="text" id="add-event-input" placeholder="Add an event…" autocomplete="off" />
+        <button type="submit" class="btn">Add</button>
+      </form>
+
       <div class="row">
-        <button class="btn ghost" id="modal-clear">Clear</button>
-        <button class="btn secondary" id="modal-cancel">Cancel</button>
-        <button class="btn" id="modal-save">Save</button>
+        <button class="btn secondary" id="modal-close" type="button">Close</button>
       </div>
     </div>
   </div>

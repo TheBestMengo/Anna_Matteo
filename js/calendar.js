@@ -1,4 +1,4 @@
-import { ensureDoc, subscribe, setEvent } from "./db.js";
+import { ensureDoc, subscribe, addEvent, removeEvent } from "./db.js";
 
 const monthLabel = document.getElementById("month-label");
 const daysGrid = document.getElementById("days-grid");
@@ -8,10 +8,10 @@ const syncStatus = document.getElementById("sync-status");
 
 const overlay = document.getElementById("modal-overlay");
 const modalDate = document.getElementById("modal-date");
-const modalTextarea = document.getElementById("modal-textarea");
-const modalSave = document.getElementById("modal-save");
-const modalCancel = document.getElementById("modal-cancel");
-const modalClear = document.getElementById("modal-clear");
+const eventList = document.getElementById("event-list");
+const addEventForm = document.getElementById("add-event-form");
+const addEventInput = document.getElementById("add-event-input");
+const modalClose = document.getElementById("modal-close");
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -19,10 +19,19 @@ today.setHours(0, 0, 0, 0);
 let viewYear = today.getFullYear();
 let viewMonth = today.getMonth(); // 0-indexed
 let activeKey = null;
-let events = {}; // live cache, kept in sync by the Firestore subscription
+let events = {}; // live cache, kept in sync by the Firestore subscription — { dateKey: [{id, text}, ...] }
 
 function dateKey(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+// Older data (from before this page supported multiple events per day)
+// stored a single string per day instead of an array — normalize it.
+function eventsFor(key) {
+  const raw = events[key];
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  return [{ id: "legacy", text: raw }];
 }
 
 function render() {
@@ -48,6 +57,7 @@ function render() {
     const cellDate = new Date(viewYear, viewMonth, d);
     cellDate.setHours(0, 0, 0, 0);
     const key = dateKey(viewYear, viewMonth, d);
+    const dayEvents = eventsFor(key);
 
     const box = document.createElement("button");
     box.type = "button";
@@ -66,16 +76,58 @@ function render() {
     num.textContent = String(d);
     box.appendChild(num);
 
-    if (events[key]) {
+    if (dayEvents.length > 0) {
       const evt = document.createElement("span");
       evt.className = "evt";
-      evt.textContent = events[key];
+      evt.textContent =
+        dayEvents.length === 1
+          ? dayEvents[0].text
+          : dayEvents.map((e) => e.text).join(" · ");
       box.appendChild(evt);
     }
 
     box.addEventListener("click", () => openModal(key, cellDate));
     daysGrid.appendChild(box);
   }
+}
+
+function renderEventList() {
+  eventList.innerHTML = "";
+  const dayEvents = eventsFor(activeKey);
+
+  if (dayEvents.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "event-empty";
+    empty.textContent = "Nothing here yet — add the first one below.";
+    eventList.appendChild(empty);
+    return;
+  }
+
+  dayEvents.forEach((entry) => {
+    const item = document.createElement("div");
+    item.className = "event-item";
+
+    const text = document.createElement("span");
+    text.className = "text";
+    text.textContent = entry.text;
+    item.appendChild(text);
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "delete-btn";
+    del.title = "Remove";
+    del.textContent = "×";
+    del.addEventListener("click", async () => {
+      try {
+        await removeEvent(activeKey, entry);
+      } catch (err) {
+        syncStatus.textContent = "couldn't save — check your connection";
+      }
+    });
+    item.appendChild(del);
+
+    eventList.appendChild(item);
+  });
 }
 
 function openModal(key, dateObj) {
@@ -85,9 +137,10 @@ function openModal(key, dateObj) {
     month: "long",
     day: "numeric",
   });
-  modalTextarea.value = events[key] || "";
+  addEventInput.value = "";
+  renderEventList();
   overlay.classList.add("open");
-  modalTextarea.focus();
+  addEventInput.focus();
 }
 
 function closeModal() {
@@ -95,29 +148,20 @@ function closeModal() {
   activeKey = null;
 }
 
-modalSave.addEventListener("click", async () => {
-  if (!activeKey) return;
-  const text = modalTextarea.value.trim();
-  closeModal();
+addEventForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = addEventInput.value.trim();
+  if (!text || !activeKey) return;
+  addEventInput.value = "";
   try {
-    await setEvent(activeKey, text);
+    await addEvent(activeKey, text);
   } catch (err) {
     syncStatus.textContent = "couldn't save — check your connection";
   }
+  addEventInput.focus();
 });
 
-modalClear.addEventListener("click", async () => {
-  if (!activeKey) return;
-  const key = activeKey;
-  closeModal();
-  try {
-    await setEvent(key, "");
-  } catch (err) {
-    syncStatus.textContent = "couldn't save — check your connection";
-  }
-});
-
-modalCancel.addEventListener("click", closeModal);
+modalClose.addEventListener("click", closeModal);
 overlay.addEventListener("click", (e) => {
   if (e.target === overlay) closeModal();
 });
@@ -149,6 +193,11 @@ nextBtn.addEventListener("click", () => {
         syncStatus.textContent = "synced";
         events = data.events || {};
         render();
+        // Keep the open modal's list current if a change comes in
+        // from the other device while it's open.
+        if (activeKey && overlay.classList.contains("open")) {
+          renderEventList();
+        }
       },
       () => {
         syncStatus.textContent = "offline — showing last saved";

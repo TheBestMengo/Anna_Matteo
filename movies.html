@@ -20,26 +20,26 @@
   }
   .legend {
     display: flex;
-    gap: 18px;
+    gap: 20px;
     flex-wrap: wrap;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
   .legend .item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     font-size: 0.82rem;
     color: var(--ink-soft);
   }
-  .swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 4px;
-    border: 1px solid var(--line);
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
   }
-  .swatch.default { background: var(--paper); }
-  .swatch.seen { background: var(--dim-red-pale); border-color: var(--dim-red); }
-  .swatch.towatch { background: var(--sage-pale); border-color: var(--sage); }
+  .dot.default { background: var(--line); }
+  .dot.seen { background: var(--dim-red); }
+  .dot.towatch { background: var(--sage); }
 
   .movie-list {
     display: flex;
@@ -49,37 +49,44 @@
   .movie-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 12px;
     border: 1px solid var(--line);
+    border-left: 4px solid var(--line);
     border-radius: var(--radius-sm);
     padding: 14px 16px;
     cursor: pointer;
     background: var(--paper);
     color: var(--ink);
-    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   }
   .movie-item:hover {
     transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
   }
   .movie-item .title {
     font-size: 1rem;
+    flex: 1;
   }
   .movie-item .status-label {
-    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
     color: var(--ink-soft);
     flex-shrink: 0;
   }
   .movie-item.seen {
     background: var(--dim-red-pale);
-    border-color: var(--dim-red);
+    border-color: var(--dim-red-pale);
+    border-left-color: var(--dim-red);
   }
-  .movie-item.seen .title { color: var(--dim-red); }
+  .movie-item.seen .status-label { color: var(--dim-red); }
   .movie-item.towatch {
     background: var(--sage-pale);
-    border-color: var(--sage);
+    border-color: var(--sage-pale);
+    border-left-color: var(--sage);
   }
-  .movie-item.towatch .title { color: var(--sage); }
+  .movie-item.towatch .status-label { color: var(--sage); }
 
   .delete-btn {
     background: none;
@@ -122,9 +129,9 @@
       </form>
 
       <div class="legend">
-        <span class="item"><span class="swatch default"></span> unmarked</span>
-        <span class="item"><span class="swatch seen"></span> seen together</span>
-        <span class="item"><span class="swatch towatch"></span> to watch</span>
+        <span class="item"><span class="dot default"></span> unmarked</span>
+        <span class="item"><span class="dot seen"></span> seen together</span>
+        <span class="item"><span class="dot towatch"></span> to watch</span>
       </div>
 
       <div class="movie-list" id="movie-list"></div>

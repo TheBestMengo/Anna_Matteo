@@ -40,7 +40,10 @@ function render() {
 
     const statusLabel = document.createElement("span");
     statusLabel.className = "status-label";
-    statusLabel.textContent = STATUS_LABEL[movie.status];
+    const dot = document.createElement("span");
+    dot.className = "dot " + movie.status;
+    statusLabel.appendChild(dot);
+    statusLabel.appendChild(document.createTextNode(STATUS_LABEL[movie.status]));
     right.appendChild(statusLabel);
 
     const del = document.createElement("button");
