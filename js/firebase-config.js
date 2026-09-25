@@ -18,4 +18,4 @@ export const firebaseConfig = {
 // characters) so a stranger can't guess it and read or edit your data.
 // It only needs to be set once — both devices just need to have the
 // same value here.
-export const SPACE_ID = "/spaces/jkfgkjrenfdké£RL*é°[jnvjrnvkerwnfuir95745920i4rfnio*FDçL*£R";
+export const SPACE_ID = "jkfgkjrenfdké£RL*é°[jnvjrnvkerwnfuir95745920i4rfnio*FDçL*£R";
