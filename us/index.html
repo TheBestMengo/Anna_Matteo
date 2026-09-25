@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>us.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .gate-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .envelope {
+    width: 100%;
+    max-width: 420px;
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 40px 36px;
+    text-align: center;
+  }
+  .stamp {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px;
+    border: 2px dashed var(--plum);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+  }
+  .envelope h1 {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+  }
+  .envelope p.sub {
+    margin-bottom: 28px;
+  }
+  #password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  #password-input {
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  #hint {
+    min-height: 22px;
+    font-size: 0.88rem;
+    color: var(--plum-dark);
+    transition: opacity 0.2s ease;
+  }
+  #error {
+    min-height: 20px;
+    font-size: 0.85rem;
+    color: var(--dim-red);
+    font-weight: 600;
+  }
+  .shake {
+    animation: shake 0.4s ease;
+  }
+  @keyframes shake {
+    10%, 90% { transform: translateX(-2px); }
+    20%, 80% { transform: translateX(4px); }
+    30%, 50%, 70% { transform: translateX(-8px); }
+    40%, 60% { transform: translateX(8px); }
+  }
+</style>
+</head>
+<body>
+  <div class="gate-page">
+    <div class="envelope" id="envelope">
+      <div class="stamp">💌</div>
+      <h1>This letter is sealed</h1>
+      <p class="sub">Only two people know the word.</p>
+
+      <form id="password-form">
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Enter the password"
+          autocomplete="off"
+          autofocus
+        />
+        <button type="submit" class="btn">Open</button>
+      </form>
+
+      <div id="error"></div>
+      <div id="hint"></div>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

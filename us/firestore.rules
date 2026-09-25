@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /spaces/{spaceId} {
+      allow read, write: if true;
+    }
+  }
+}
+
+// This allows anyone who knows your exact spaceId (set in
+// js/firebase-config.js) to read and write that one document — nobody
+// else can find or touch it without that id. That's why SPACE_ID needs
+// to be a long, random string rather than something guessable like "us".

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>us. — calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .cal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .cal-header h2 {
+    font-size: 1.5rem;
+    min-width: 200px;
+    text-align: center;
+  }
+  .weekdays,
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+  .weekdays {
+    margin-bottom: 8px;
+  }
+  .weekdays span {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+  }
+  .day-box {
+    aspect-ratio: 1 / 1;
+    min-height: 64px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 6px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    overflow: hidden;
+  }
+  .day-box:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+  .day-box .num {
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+  .day-box .evt {
+    font-size: 0.7rem;
+    color: var(--ink);
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+  .day-box.empty {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .day-box.past {
+    background: var(--gray-past);
+    color: var(--ink-soft);
+    border-color: var(--gray-past);
+  }
+  .day-box.today {
+    background: var(--dim-yellow);
+    border-color: var(--dim-yellow);
+  }
+  .day-box.future {
+    background: var(--paper);
+  }
+
+  /* modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(62, 54, 48, 0.35);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+  }
+  .modal-overlay.open {
+    display: flex;
+  }
+  .modal {
+    background: var(--paper);
+    border-radius: var(--radius-md);
+    padding: 26px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: var(--shadow);
+  }
+  .modal h3 {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+  .modal textarea {
+    width: 100%;
+    min-height: 90px;
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--cream);
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+  }
+  .modal .row {
+    margin-top: 16px;
+    justify-content: flex-end;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <span class="brand">us.</span>
+      <div class="row" style="gap: 16px;">
+        <span class="muted" id="sync-status">connecting…</span>
+        <a class="nav-link" href="home.html">← home</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="cal-header">
+        <button class="btn ghost" id="prev-month">‹ prev</button>
+        <h2 id="month-label"></h2>
+        <button class="btn ghost" id="next-month">next ›</button>
+      </div>
+
+      <div class="weekdays">
+        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+      </div>
+      <div class="days-grid" id="days-grid"></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <h3 id="modal-date"></h3>
+      <p class="muted">Add a plan, a memory, or a reminder for this day.</p>
+      <textarea id="modal-textarea" placeholder="e.g. Flight lands at 6pm ✈️"></textarea>
+      <div class="row">
+        <button class="btn ghost" id="modal-clear">Clear</button>
+        <button class="btn secondary" id="modal-cancel">Cancel</button>
+        <button class="btn" id="modal-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/guard.js"></script>
+  <script type="module" src="js/calendar.js"></script>
+</body>
+</html>
