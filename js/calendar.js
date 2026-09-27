@@ -79,11 +79,19 @@ function render() {
     if (dayEvents.length > 0) {
       const evt = document.createElement("span");
       evt.className = "evt";
-      evt.textContent =
-        dayEvents.length === 1
-          ? dayEvents[0].text
-          : dayEvents.map((e) => e.text).join(" · ");
+      evt.textContent = dayEvents[0].text;
       box.appendChild(evt);
+
+      if (dayEvents.length > 1) {
+        const more = document.createElement("span");
+        more.className = "evt-more";
+        more.textContent = `+${dayEvents.length - 1} more`;
+        box.appendChild(more);
+      }
+
+      // Full list on hover/long-press, since the box itself only ever
+      // shows a short preview.
+      box.title = dayEvents.map((e) => e.text).join("\n");
     }
 
     box.addEventListener("click", () => openModal(key, cellDate));

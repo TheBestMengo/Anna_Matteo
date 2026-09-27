@@ -60,7 +60,7 @@
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     text-align: left;
     transition: transform 0.12s ease, box-shadow 0.12s ease;
     overflow: hidden;
@@ -72,6 +72,7 @@
   .day-box .num {
     font-weight: 600;
     font-size: 0.85rem;
+    flex-shrink: 0;
   }
   .day-box .evt {
     font-size: 0.7rem;
@@ -79,8 +80,22 @@
     line-height: 1.25;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  .day-box .evt-more {
+    align-self: flex-start;
+    flex-shrink: 0;
+    font-size: 0.62rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--plum-dark);
+    background: var(--plum-pale);
+    padding: 0 7px;
+    border-radius: 999px;
+    white-space: nowrap;
   }
   .day-box.empty {
     visibility: hidden;
@@ -103,7 +118,12 @@
     .day-box .evt {
       font-size: 0.58rem;
       line-height: 1.15;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 1;
+    }
+    .day-box .evt-more {
+      font-size: 0.52rem;
+      padding: 0 5px;
+      line-height: 1.3;
     }
     .weekdays span {
       font-size: 0.62rem;
@@ -118,9 +138,17 @@
     color: var(--ink-soft);
     border-color: var(--gray-past);
   }
+  .day-box.past .evt-more {
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--ink-soft);
+  }
   .day-box.today {
     background: var(--dim-yellow);
     border-color: var(--dim-yellow);
+  }
+  .day-box.today .evt-more {
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--ink);
   }
   .day-box.future {
     background: var(--paper);

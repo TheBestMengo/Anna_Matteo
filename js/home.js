@@ -11,6 +11,7 @@ const syncStatus = document.getElementById("sync-status");
 const toggleBtn = document.getElementById("toggle-date-btn");
 const dateForm = document.getElementById("date-form");
 const dateInput = document.getElementById("date-input");
+const timeInput = document.getElementById("time-input");
 const cancelBtn = document.getElementById("cancel-date-btn");
 
 const logoutLink = document.getElementById("logout-link");
@@ -18,9 +19,38 @@ const logoutLink = document.getElementById("logout-link");
 let currentTarget = null; // Date object or null
 let timerId = null;
 
+// date/time inputs work in local wall-clock time, so build and read
+// them from a Date's local fields rather than toISOString() (which is
+// UTC and can silently shift the day near midnight).
+function toLocalDateValue(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function toLocalTimeValue(date) {
+  const h = String(date.getHours()).padStart(2, "0");
+  const min = String(date.getMinutes()).padStart(2, "0");
+  return `${h}:${min}`;
+}
+
+// Accepts either a plain "YYYY-MM-DD" (older saves, before time support)
+// or a full "YYYY-MM-DDTHH:MM" and always parses it as local time.
+function parseTarget(raw) {
+  if (!raw) return null;
+  return raw.includes("T") ? new Date(raw) : new Date(raw + "T00:00:00");
+}
+
 function formatTargetLabel(date) {
-  const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
-  return "Marked for " + date.toLocaleDateString(undefined, options);
+  const dateOptions = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+  const timeOptions = { hour: "numeric", minute: "2-digit" };
+  return (
+    "Marked for " +
+    date.toLocaleDateString(undefined, dateOptions) +
+    " at " +
+    date.toLocaleTimeString(undefined, timeOptions)
+  );
 }
 
 function tick() {
@@ -70,7 +100,10 @@ function startTicking() {
 
 toggleBtn.addEventListener("click", () => {
   if (currentTarget && !isNaN(currentTarget.getTime())) {
-    dateInput.value = currentTarget.toISOString().slice(0, 10);
+    dateInput.value = toLocalDateValue(currentTarget);
+    timeInput.value = toLocalTimeValue(currentTarget);
+  } else {
+    timeInput.value = "20:00";
   }
   dateForm.classList.add("open");
   toggleBtn.style.display = "none";
@@ -86,8 +119,9 @@ dateForm.addEventListener("submit", async (e) => {
   if (!dateInput.value) return;
   dateForm.classList.remove("open");
   toggleBtn.style.display = "inline-flex";
+  const time = timeInput.value || "00:00";
   try {
-    await setNextDate(dateInput.value);
+    await setNextDate(`${dateInput.value}T${time}`);
   } catch (err) {
     syncStatus.textContent = "couldn't save — check your connection";
   }
@@ -106,7 +140,7 @@ logoutLink.addEventListener("click", (e) => {
     subscribe(
       (data) => {
         syncStatus.textContent = "synced";
-        currentTarget = data.nextDate ? new Date(data.nextDate) : null;
+        currentTarget = parseTarget(data.nextDate);
         startTicking();
       },
       () => {

@@ -206,7 +206,8 @@ input {
 
 input[type="text"],
 input[type="password"],
-input[type="date"] {
+input[type="date"],
+input[type="time"] {
   font-size: 1rem;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
@@ -219,7 +220,8 @@ input[type="date"] {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-input[type="date"]:focus {
+input[type="date"]:focus,
+input[type="time"]:focus {
   border-color: var(--plum);
   box-shadow: 0 0 0 3px var(--plum-pale);
 }
