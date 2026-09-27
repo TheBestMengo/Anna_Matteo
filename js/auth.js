@@ -4,15 +4,18 @@
 
 // The password that unlocks the site. Change this to something
 // only the two of you know.
-const PASSWORD = "changeme";
+const PASSWORD = "cipollinottolo";
 
 // A hint is shown after each wrong attempt, one at a time, in order.
 // Write your own inside jokes / clues here. As many as you like.
 const HINTS = [
-  "Hint: think about where we met.",
-  "Hint: it has something to do with our song.",
-  "Hint: the nickname only you use for me.",
-  "Hint: you know this one — think harder.",
+  "Hint: Think of how we talked to each other at the beginning.",
+  "Hint: It has something to do with fear and love.",
+  "Hint: It has something to do with snakes.",
+  "Hint: It is the opposite to a word concerning BEARS!",
+  "You are really SCARSA, you know?",
+  "BRUH",
+  "Hint: Orsottopotto mio, what nickname did you use for me at the very beginning?"
 ];
 
 /* ========================================================= */
@@ -46,7 +49,7 @@ form.addEventListener("submit", (e) => {
   }
 
   // Wrong password
-  errorEl.textContent = "Not quite — try again.";
+  errorEl.textContent = "AZZ! Not quite — try again.";
   envelope.classList.remove("shake");
   // force reflow so the animation can replay
   void envelope.offsetWidth;
@@ -55,7 +58,7 @@ form.addEventListener("submit", (e) => {
   if (attempts < HINTS.length) {
     hintEl.textContent = HINTS[attempts];
   } else {
-    hintEl.textContent = "That was all the hints — ask them directly!";
+    hintEl.textContent = "That was all the hints :( — ask Matteo directly!";
   }
   attempts++;
 

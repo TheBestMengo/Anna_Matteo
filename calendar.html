@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="robots" content="noindex, nofollow" />
-<title>us. — calendar</title>
+<title>Anna & Matteo's Website — Calendar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -14,17 +14,29 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
     margin-bottom: 22px;
   }
   .cal-header h2 {
-    font-size: 1.5rem;
-    min-width: 200px;
+    font-size: clamp(1.05rem, 4.5vw, 1.5rem);
+    flex: 1;
+    min-width: 0;
+    margin: 0;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cal-header .btn.ghost {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
   .weekdays,
   .days-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 8px;
   }
   .weekdays {
@@ -39,6 +51,8 @@
   .day-box {
     aspect-ratio: 1 / 1;
     min-height: 64px;
+    min-width: 0;
+    width: 100%;
     border-radius: var(--radius-sm);
     border: 1px solid var(--line);
     background: var(--paper);
@@ -71,6 +85,33 @@
   .day-box.empty {
     visibility: hidden;
     pointer-events: none;
+  }
+
+  @media (max-width: 480px) {
+    .weekdays,
+    .days-grid {
+      gap: 4px;
+    }
+    .day-box {
+      min-height: 44px;
+      padding: 4px 5px;
+      gap: 2px;
+    }
+    .day-box .num {
+      font-size: 0.72rem;
+    }
+    .day-box .evt {
+      font-size: 0.58rem;
+      line-height: 1.15;
+      -webkit-line-clamp: 2;
+    }
+    .weekdays span {
+      font-size: 0.62rem;
+    }
+    .cal-header .btn.ghost {
+      padding: 8px 9px;
+      font-size: 0.78rem;
+    }
   }
   .day-box.past {
     background: var(--gray-past);
@@ -186,10 +227,10 @@
 <body>
   <div class="page">
     <div class="topbar">
-      <span class="brand">us.</span>
+      <span class="brand">Anna & Matteo's Website</span>
       <div class="row" style="gap: 16px;">
         <span class="muted" id="sync-status">connecting…</span>
-        <a class="nav-link" href="home.html">← home</a>
+        <a class="nav-link" href="home.html">← Home</a>
       </div>
     </div>
 
@@ -210,7 +251,7 @@
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal">
       <h3 id="modal-date"></h3>
-      <p class="muted">Plans, memories, and reminders for this day.</p>
+      <p class="muted">Plans for this day.</p>
 
       <div class="event-list" id="event-list"></div>
 
